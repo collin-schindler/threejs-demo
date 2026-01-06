@@ -1,7 +1,7 @@
 import './style.css'
 import * as THREE from 'three'
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js'  // Mouse controls
-// import Stats from 'three/addons/libs/stats.module.js' // Stats panel
+import Stats from 'three/addons/libs/stats.module.js' // Stats panel
 import {GUI} from 'dat.gui' // GUI for objects in scene?
 
 const scene = new THREE.Scene()
@@ -15,6 +15,8 @@ sceneB.background = new THREE.CubeTextureLoader().setPath('https://sbcode.net/im
 
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
 camera.position.z = 1.5
+const camera2 = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
+camera2.position.z = 1.5
 
 const canvas = document.getElementById("threeJsCanvas") as HTMLCanvasElement
 const renderer = new THREE.WebGLRenderer({ canvas: canvas })
@@ -29,11 +31,9 @@ renderer2.setSize(300, 300)
 //   camera.aspect = window.innerWidth / window.innerHeight
 //   camera.updateProjectionMatrix()
 //   renderer.setSize(window.innerWidth, window.innerHeight)
+//   renderer.render(scene, camera) // used to manually rerender when the screen size changes
 // })
 
-// Adding mouse controls
-new OrbitControls(camera, renderer.domElement)
-new OrbitControls(camera, renderer2.domElement)
 
 const geometry = new THREE.BoxGeometry(1, 1.5, .1)
 const hardware = new THREE.SphereGeometry(.05, 6, 3)
@@ -51,8 +51,8 @@ sceneB.add(cube2)
 sceneB.add(handle2)
 
 // Adding stats panel
-// const stats = new Stats()
-// document.body.appendChild(stats.dom)
+const stats = new Stats()
+document.body.appendChild(stats.dom)
 
 // Adding object gui
 const gui = new GUI()
@@ -91,20 +91,38 @@ const setScene = {
   }
 }
 
+// Adding mouse controls
+const controls = new OrbitControls(camera, renderer.domElement)
+controls.addEventListener('change', function () {
+  renderer.render(activeScene, camera)
+})
+const controls2 = new OrbitControls(camera2, renderer2.domElement)
+controls2.addEventListener('change', function () {
+  renderer2.render(sceneB, camera2)
+})
+
 const sceneSwapFolder = gui.addFolder("Scene Swap")
 sceneSwapFolder.add(setScene, 'scene').name('Door Only')
 sceneSwapFolder.add(setScene, 'sceneA').name('Hardware Only')
 sceneSwapFolder.add(setScene, 'sceneB').name('Door and Hardware')
-function animate() {
-  requestAnimationFrame(animate)
 
-  // cube.rotation.x += 0.01
-  // cube.rotation.y += 0.01
+// Adding delta time to accomodate different screen refresh rates
+// const clock = new THREE.Clock()
+// let delta
 
-  renderer.render(activeScene, camera)
-  renderer2.render(sceneB, camera)
+// function animate() {
+//   requestAnimationFrame(animate)
 
-  // stats.update()
-}
+//   delta = clock.getDelta()
+//   cube.rotation.x += delta
+//   cube.rotation.y += delta
 
-animate()
+//   renderer.render(activeScene, camera)
+//   renderer2.render(sceneB, camera)
+
+//   stats.update()
+// }
+
+// animate()
+renderer.render(activeScene, camera)
+renderer2.render(sceneB, camera2)
