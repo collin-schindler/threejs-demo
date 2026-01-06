@@ -1,7 +1,7 @@
 import './style.css'
 import * as THREE from 'three'
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js'  // Mouse controls
-import Stats from 'three/addons/libs/stats.module.js' // Stats panel
+// import Stats from 'three/addons/libs/stats.module.js' // Stats panel
 import {GUI} from 'dat.gui' // GUI for objects in scene?
 
 const scene = new THREE.Scene()
