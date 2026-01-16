@@ -1,108 +1,110 @@
+// Object 3D Hierachy - Global vs local position in relation to parents/children
 import './style.css'
 import * as THREE from 'three'
-import {OrbitControls} from 'three/addons/controls/OrbitControls.js'  // Mouse controls
-import Stats from 'three/addons/libs/stats.module.js' // Stats panel
-import {GUI} from 'dat.gui' // GUI for objects in scene?
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+import Stats from 'three/addons/libs/stats.module.js'
+import { GUI } from 'dat.gui'
 
 const scene = new THREE.Scene()
-const sceneA = new THREE.Scene()
-const sceneB = new THREE.Scene()
-
-scene.background = new THREE.Color(0x123456)
-sceneA.background = new THREE.TextureLoader().load('https://sbcode.net/img/grid.png')
-sceneB.background = new THREE.CubeTextureLoader().setPath('https://sbcode.net/img/')
-.load(['px.png', 'nx.png', 'py.png', 'ny.png', 'pz.png', 'nz.png'])
+scene.add(new THREE.AxesHelper(5))
 
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
-camera.position.z = 1.5
+camera.position.set(4, 4, 4)
 
-const canvas = document.getElementById("threeJsCanvas") as HTMLCanvasElement
-const renderer = new THREE.WebGLRenderer({ canvas: canvas })
+const renderer = new THREE.WebGLRenderer()
 renderer.setSize(window.innerWidth, window.innerHeight)
 document.body.appendChild(renderer.domElement)
+
+const controls = new OrbitControls(camera, renderer.domElement)
+controls.target.set(8, 0, 0)
+controls.update()
+
+const light = new THREE.PointLight(0xffffff, 400)
+light.position.set(10, 10, 10)
+scene.add(light)
+
+const object1 = new THREE.Mesh(new THREE.SphereGeometry(), new THREE.MeshPhongMaterial({ color: 0xff0000 }))
+object1.position.set(4, 0, 0)
+scene.add(object1)
+object1.add(new THREE.AxesHelper(5))
+
+const object2 = new THREE.Mesh(new THREE.SphereGeometry(), new THREE.MeshPhongMaterial({ color: 0x00ff00 }))
+object2.position.set(4, 0, 0)
+object1.add(object2)
+object2.add(new THREE.AxesHelper(5))
+
+const object3 = new THREE.Mesh(new THREE.SphereGeometry(), new THREE.MeshPhongMaterial({ color: 0x0000ff }))
+object3.position.set(4, 0, 0)
+object2.add(object3)
+object3.add(new THREE.AxesHelper(5))
 
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight
   camera.updateProjectionMatrix()
   renderer.setSize(window.innerWidth, window.innerHeight)
-  renderer.render(scene, camera) // used to manually rerender when the screen size changes
 })
 
-const geometry = new THREE.BoxGeometry(1, 1.5, .1)
-const hardware = new THREE.SphereGeometry(.05, 6, 3)
-hardware.translate(-.4, -.03, 0)
-const material = new THREE.MeshNormalMaterial({ wireframe: true })
-const handleMaterial = new THREE.MeshNormalMaterial({ transparent: true, opacity: .5,})
+const gui = new GUI()
+const object1Folder = gui.addFolder('Object1 (Red Ball)')
+object1Folder.add(object1.position, 'x', 0, 10, 0.01).name('X Position')
+object1Folder.add(object1.rotation, 'x', 0, Math.PI * 2, 0.01).name('X Rotation')
+object1Folder.add(object1.scale, 'x', 0, 2, 0.01).name('X Scale')
+object1Folder.add(object1, 'visible', 0, 2, 0.01).name('Visible')
+object1Folder.open()
+const object2Folder = gui.addFolder('Object2 (Green Ball)')
+object2Folder.add(object2.position, 'x', 0, 10, 0.01).name('X Position')
+object2Folder.add(object2.rotation, 'x', 0, Math.PI * 2, 0.01).name('X Rotation')
+object2Folder.add(object2.scale, 'x', 0, 2, 0.01).name('X Scale')
+object2Folder.add(object2, 'visible', 0, 2, 0.01).name('Visible')
+object2Folder.open()
+const object3Folder = gui.addFolder('Object3 (Blue Ball)')
+object3Folder.add(object3.position, 'x', 0, 10, 0.01).name('X Position')
+object3Folder.add(object3.rotation, 'x', 0, Math.PI * 2, 0.01).name('X Rotation')
+object3Folder.add(object3.scale, 'x', 0, 2, 0.01).name('X Scale')
+object3Folder.add(object3, 'visible', 0, 2, 0.01).name('Visible')
+object3Folder.open()
 
-const cube = new THREE.Mesh(geometry, material)
-const handle = new THREE.Mesh(hardware, handleMaterial)
-scene.add(cube)
-scene.add(handle)
-
-// Adding stats panel
 const stats = new Stats()
 document.body.appendChild(stats.dom)
 
-// Adding object gui
-const gui = new GUI()
+const debug = document.getElementById('debug') as HTMLDivElement
 
-// // Adding Folder for GUI
-const cubeFolder = gui.addFolder("Door Orientation")
-cubeFolder.add(cube.rotation, "x", 0, Math.PI * 2)
-cubeFolder.add(cube.rotation, "y", 0, Math.PI * 2)
-cubeFolder.add(cube.rotation, "z", 0, Math.PI * 2)
+function animate() {
+  requestAnimationFrame(animate)
 
-// // Adding camera folder for GUI
-const cameraFolder = gui.addFolder("Camera Zoom")
-cameraFolder.add(camera.position, "z", 1.5, 5)
+  renderer.render(scene, camera)
 
-// // Adding size sliders for cube
-const cubeSizingFolder = gui.addFolder("Door Sizing")
-cubeSizingFolder.add(cube.scale, "x", 1, 1.96)
-cubeSizingFolder.add(cube.scale, "y", 1, 2.44)
-cubeSizingFolder.add(cube.scale, "z", .1, .175)
+  const object1WorldPosition = new THREE.Vector3()
+  object1.getWorldPosition(object1WorldPosition)
+  const object2WorldPosition = new THREE.Vector3()
+  object2.getWorldPosition(object2WorldPosition)
+  const object3WorldPosition = new THREE.Vector3()
+  object3.getWorldPosition(object3WorldPosition)
 
-// // Adding hardware position sliders
-const hardwareFolder = gui.addFolder("Hardware Position")
-hardwareFolder.add(handle.position, "x", 0, .8)
-hardwareFolder.add(handle.position, "y", -.4, .4)
+  debug.innerText =
+    'Red\n' +
+    'Local Pos X : ' +
+    object1.position.x.toFixed(2) +
+    '\n' +
+    'World Pos X : ' +
+    object1WorldPosition.x.toFixed(2) +
+    '\n' +
+    '\nGreen\n' +
+    'Local Pos X : ' +
+    object2.position.x.toFixed(2) +
+    '\n' +
+    'World Pos X : ' +
+    object2WorldPosition.x.toFixed(2) +
+    '\n' +
+    '\nBlue\n' +
+    'Local Pos X : ' +
+    object3.position.x.toFixed(2) +
+    '\n' +
+    'World Pos X : ' +
+    object3WorldPosition.x.toFixed(2) +
+    '\n'
 
-let activeScene = scene
-const setScene = {
-  scene: function () {
-    activeScene = scene
-  },
-  sceneA: function () {
-    activeScene = sceneA
-  },
-  sceneB: function () {
-    activeScene = sceneB
-  }
+  stats.update()
 }
 
-// Adding mouse controls
-const controls = new OrbitControls(camera, renderer.domElement)
-controls.addEventListener('change', function () {
-  renderer.render(activeScene, camera)
-})
-
-const sceneSwapFolder = gui.addFolder("Scene Swap")
-sceneSwapFolder.add(setScene, 'scene').name('Door Only')
-sceneSwapFolder.add(setScene, 'sceneA').name('Hardware Only')
-sceneSwapFolder.add(setScene, 'sceneB').name('Door and Hardware')
-
-// Adding delta time to accomodate different screen refresh rates
-// const clock = new THREE.Clock()
-// let delta
-
-// function animate() {
-//   requestAnimationFrame(animate)
-
-//   delta = clock.getDelta()
-
-//   renderer.render(activeScene, camera)
-
-//   stats.update()
-// }
-
-renderer.render(activeScene, camera)
+animate()
