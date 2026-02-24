@@ -62,12 +62,29 @@ door.position.x = .1
 door.position.y = .3
 door.scale.z = .05
 
+// Roof shape to extrude
+const overHang = .05
+const peak = .1
+const extrudeSettings = {
+    depth: width - overHang,
+}
+const shape = new THREE.Shape()
+shape.moveTo(width / 2 - overHang, height / 2)
+shape.lineTo(0, height / 2 + peak)
+shape.lineTo(-width / 2 + overHang, height / 2)
+shape.lineTo(width / 2 - overHang, height / 2)
+const roofGeometry = new THREE.ExtrudeGeometry(shape, extrudeSettings)
+const roofMaterial = new THREE.MeshBasicMaterial({ color: 0xffaa00 })
+const roof = new THREE.Mesh(roofGeometry, roofMaterial)
+roof.position.z = - width / 2
+
 scene.add(wall)
 scene.add(wall2)
 scene.add(wall3)
 scene.add(wall4)
 scene.add(floor)
 scene.add(door)
+scene.add(roof)
 
 // Adding object GUI
 const gui = new GUI()
@@ -94,6 +111,7 @@ function animate() {
     wall4.position.x = -wall.scale.x * width * height
     // Scale floor to follow
     floor.scale.x = wall.scale.x
+    roof.scale.x = wall.scale.x
 
     // Adjust side walls length
     wall4.scale.x = wall3.scale.x
@@ -102,6 +120,7 @@ function animate() {
     wall2.position.z = wall3.scale.x * width * height
     // Scale floor to follow
     floor.scale.y = wall3.scale.x
+    roof.scale.y = wall3.scale.x
 
 
 
