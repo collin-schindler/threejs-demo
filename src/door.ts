@@ -55,11 +55,19 @@ const floor = new THREE.Mesh(geometry, material)
 floor.rotation.x = Math.PI / 2
 floor.position.y = -width * height
 
+doorGeometry.translate(-.1, -.3, -.2)
+const door = new THREE.Mesh(doorGeometry, new THREE.MeshBasicMaterial({ color: 0xffff00 }))
+door.position.z = -width / 2
+door.position.x = .1
+door.position.y = .3
+door.scale.z = .05
+
 scene.add(wall)
 scene.add(wall2)
 scene.add(wall3)
 scene.add(wall4)
 scene.add(floor)
+scene.add(door)
 
 // Adding object GUI
 const gui = new GUI()
@@ -67,6 +75,8 @@ const resize = gui.addFolder("Resize")
 resize.add(wall.scale, "x", .25, 2)
 
 resize.add(wall3.scale, "x", .25, 2)
+const swing = gui.addFolder("Swing door")
+swing.add(door.rotation, "y", 0, Math.PI / 2)
 
 const controls = new OrbitControls(camera, renderer.domElement)
 controls.addEventListener('change', function () {
