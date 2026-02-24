@@ -24,14 +24,14 @@ window.addEventListener('resize', () => {
 // Box Mesh
 const boxGeometry = new THREE.BoxGeometry(2, 2, 2)
 const brush1 = new Brush(boxGeometry)
-const boxMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 })
-const box = new THREE.Mesh(boxGeometry, boxMaterial)
+// const boxMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 })
+// const box = new THREE.Mesh(boxGeometry, boxMaterial)
 
 // Cylinder Mesh
 const cylinderGeometry = new THREE.CylinderGeometry(.8, .4, 2.5, 32)
 const brush2 = new Brush(cylinderGeometry)
-const cylinderMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 })
-const cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial)
+// const cylinderMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 })
+// const cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial)
 
 // Perform mesh subtraction: box - cylinder
 const evaluator = new Evaluator()

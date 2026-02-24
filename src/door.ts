@@ -73,8 +73,8 @@ controls.addEventListener('change', function () {
     renderer.render(scene, camera)
 })
 
-const clock = new THREE.Clock()
-let delta
+// const clock = new THREE.Clock()
+// let delta
 function animate() {
     requestAnimationFrame(animate)
     // Adjust front and back walls
@@ -95,7 +95,7 @@ function animate() {
 
 
 
-    delta = clock.getDelta()
+    // delta = clock.getDelta()
     renderer.render(scene, camera)
 }
 // renderer.render(scene, camera)
