@@ -13,6 +13,7 @@
     "@types/three": "^0.182.0",
     "gh-pages": "^6.3.0",
     "three": "^0.182.0",
+    "three-bvh-csg": "^0.0.18",
     "typescript": "~5.9.3",
     "vite": "^7.3.1"
   }
